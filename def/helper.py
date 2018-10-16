@@ -101,3 +101,48 @@ def get_col(data, index):
 	for i in range(0,len(data)):
 		ret_col.append(data[i][index])
 	return ret_col
+
+def get_key_value(data):
+	key, val = [], []
+	for k in data:
+		key.append(k)
+		val.append(data[k])
+	return key, val
+
+'''
+	Start pre-processing data
+	Param: path to the file in nab
+	Return: 2D matrix of a data (1st col unix time, 2nd col val)
+'''
+
+def start_process_freq(file_path):	
+	# row[0] => date and time
+	# row[1] => mentioned
+	# Using UNIX timestamp from January 1, 1970
+	column_num = 0
+	row_num = 0
+	freq_dict = dict()
+	 
+	with open(file_path) as csvfile:
+		spamreader = iter(csv.reader(csvfile, delimiter=','))
+		next(spamreader)
+		ret_matrix = []
+		for row in spamreader:
+			# Check for columns
+			if column_num == 0:
+				column_num = len(row)
+			mentions = int(row[1])
+			if row[1] in freq_dict:
+				freq_dict[row[1]] += 1
+			else:
+				freq_dict[row[1]] = 1
+			''' print unix time  '''
+			#print(unix_time)
+			row_num += 1
+		for k in freq_dict:
+			ret_matrix.append([k, freq_dict[k]])
+		print('--------------------------------')
+		print('Rows Number: ', row_num)
+		print('Columns Number: ', column_num)
+		print('--------------------------------')
+		return ret_matrix
